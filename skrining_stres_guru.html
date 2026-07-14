@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skrining Awal Tingkat Stres Kerja Guru</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-1:#EAF6F3;
+    --bg-2:#F7FCFB;
+    --card:#FFFFFF;
+    --ink:#1E2A32;
+    --ink-soft:#5C7069;
+    --primary:#1E7F8C;
+    --primary-dark:#155F69;
+    --primary-tint:#E4F3F1;
+    --accent:#4C9A6B;
+    --accent-tint:#EAF6EE;
+    --success:#2F9E6E;
+    --success-tint:#E7F8EF;
+    --warn:#C97A26;
+    --warn-tint:#FBF0E1;
+    --danger:#D9534F;
+    --danger-tint:#FCEBEA;
+    --line:#DCEAE6;
+    --radius:16px;
+    --radius-sm:10px;
+    --shadow:0 10px 30px -12px rgba(20,60,60,0.16);
+    --shadow-sm:0 2px 8px rgba(20,60,60,0.08);
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Inter',sans-serif; color:var(--ink);
+    background:
+      radial-gradient(1100px 500px at 8% -10%, #DCF1EA 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, #DDEFF7 0%, transparent 55%),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2) 40%);
+    min-height:100vh; padding:32px 16px 64px; line-height:1.55;
+  }
+  h1,h2,h3{ font-family:'Poppins',sans-serif; margin:0; }
+  .wrap{ max-width:860px; margin:0 auto; }
+  .app-header{ text-align:center; margin-bottom:20px; }
+  .app-header .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:.75rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--primary); background:var(--primary-tint);
+    padding:6px 14px; border-radius:999px; margin-bottom:14px;
+  }
+  .app-header h1{ font-size:clamp(1.5rem,4vw,2.1rem); color:var(--ink); letter-spacing:-0.01em; }
+  .app-header p{ color:var(--ink-soft); max-width:560px; margin:10px auto 0; font-size:.95rem; }
+
+  .disclaimer{
+    background:var(--warn-tint); border:1px solid #F0D9B5; border-radius:var(--radius-sm);
+    padding:16px 18px; margin-bottom:22px; font-size:.85rem; color:#5B4008;
+  }
+  .disclaimer strong{ display:block; font-size:.9rem; color:#5B4008; margin-bottom:6px; }
+  .disclaimer ul{ margin:8px 0 0; padding-left:18px; }
+  .disclaimer li{ margin-bottom:4px; }
+
+  .card{ background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--line); overflow:hidden; }
+  .stepper{ display:flex; padding:24px 28px 0; gap:8px; }
+  .step{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; }
+  .step .dot{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:.85rem; font-family:'Poppins',sans-serif; padding:0; line-height:1;
+    background:#EEF3F1; color:var(--ink-soft); border:2px solid #EEF3F1; transition:all .25s ease; z-index:1;
+    cursor:default;
+  }
+  .step.done .dot, .step.active .dot{ cursor:pointer; }
+  .step .dot:focus-visible{ outline:2px solid var(--primary); outline-offset:3px; }
+  .step .label{ font-size:.7rem; font-weight:600; color:var(--ink-soft); text-align:center; max-width:110px; }
+  .step::after{ content:''; position:absolute; top:17px; left:50%; width:100%; height:2px; background:#EEF3F1; z-index:0; }
+  .step:last-child::after{ display:none; }
+  .step.active .dot{ background:var(--primary); border-color:var(--primary); color:#fff; box-shadow:0 0 0 5px var(--primary-tint); animation:dotPulse .4s cubic-bezier(.34,1.56,.64,1); }
+  .step.active .label{ color:var(--primary-dark); }
+  .step.done .dot{ background:var(--success); border-color:var(--success); color:#fff; }
+  .step.done::after{ background:var(--success); }
+  .step.done .label{ color:var(--success); }
+  @keyframes dotPulse{ 0%{ transform:scale(.75); } 60%{ transform:scale(1.12); } 100%{ transform:scale(1); } }
+  @keyframes fadeInUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .fade-in{ animation:fadeInUp .4s cubic-bezier(.22,1,.36,1) both; }
+  .progress-shell{ padding:16px 28px 0; }
+  .progress-track{ height:8px; border-radius:99px; background:#EEF3F1; overflow:hidden; }
+  .progress-fill{
+    height:100%; border-radius:99px; background:linear-gradient(90deg,var(--primary),var(--accent));
+    width:0%; transition:width .5s cubic-bezier(.4,0,.2,1); position:relative; overflow:hidden;
+  }
+  .progress-fill::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+    width:60px; animation:shimmer 2.2s ease-in-out infinite;
+  }
+  @keyframes shimmer{ 0%{ transform:translateX(-80px); } 100%{ transform:translateX(220px); } }
+  .progress-meta{ display:flex; justify-content:space-between; font-size:.75rem; color:var(--ink-soft); margin-top:6px; font-weight:600; }
+  .form-body{ padding:26px 28px 8px; }
+  .section-head{ margin-bottom:18px; }
+  .section-head h2{ font-size:1.2rem; color:var(--primary-dark); }
+  .section-head p{ color:var(--ink-soft); font-size:.88rem; margin-top:4px; }
+  .question{ margin-bottom:20px; padding:16px 18px; border:1px solid var(--line); border-radius:var(--radius-sm); background:#FBFEFD; transition:border-color .2s ease; }
+  .question.invalid{ border-color:var(--danger); background:var(--danger-tint); }
+  .question label.qlabel{ display:block; font-weight:600; font-size:.92rem; margin-bottom:10px; color:var(--ink); }
+  .qhint{ font-size:.78rem; color:var(--ink-soft); margin:-6px 0 10px; }
+  .required-mark{ color:var(--danger); margin-left:2px; }
+  input[type="text"], textarea, select{
+    width:100%; padding:11px 13px; font-family:'Inter',sans-serif; font-size:.92rem;
+    border:1.5px solid var(--line); border-radius:9px; background:#fff; color:var(--ink);
+    transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  textarea{ min-height:80px; resize:vertical; }
+  input[type="text"]:focus, textarea:focus, select:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-tint); }
+  .options-grid{ display:flex; flex-direction:column; gap:8px; }
+  .option-item{
+    display:flex; align-items:center; gap:12px; padding:10px 12px; border:1.5px solid var(--line); border-radius:9px;
+    cursor:pointer; font-size:.9rem; transition:all .18s ease; background:#fff;
+  }
+  .option-item:hover{ border-color:var(--primary); background:var(--primary-tint); transform:translateX(2px); }
+  .option-item input{ position:absolute; opacity:0; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+  .option-item:focus-within{ outline:2px solid var(--primary); outline-offset:2px; }
+  .option-item .indicator{ flex-shrink:0; width:19px; height:19px; border:2px solid #C3D3CD; background:#fff; position:relative; transition:all .18s ease; }
+  .option-item .indicator.radio-shape{ border-radius:50%; }
+  .option-item .indicator.checkbox-shape{ border-radius:5px; }
+  .option-item.checked .indicator{ border-color:var(--primary); background:var(--primary); }
+  .option-item.checked .indicator.radio-shape::after{
+    content:''; position:absolute; top:50%; left:50%; width:8px; height:8px; border-radius:50%; background:#fff; transform:translate(-50%,-50%);
+  }
+  .option-item.checked .indicator.checkbox-shape::after{
+    content:''; position:absolute; top:2px; left:5px; width:5px; height:9px; border:solid #fff; border-width:0 2px 2px 0; transform:rotate(45deg);
+  }
+  .option-item.checked{ border-color:var(--primary); background:var(--primary-tint); font-weight:600; }
+  .scale-row{ display:flex; gap:6px; justify-content:space-between; }
+  .scale-item{ position:relative; flex:1; text-align:center; padding:10px 4px; border:1.5px solid var(--line); border-radius:9px; cursor:pointer; font-size:.74rem; color:var(--ink-soft); background:#fff; display:block; }
+  .scale-item input{ position:absolute; opacity:0; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+  .scale-item .scale-num{ display:block; font-weight:700; }
+  .scale-item:hover{ border-color:var(--accent); }
+  .scale-item.checked{ background:var(--accent-tint); border-color:var(--accent); color:var(--ink); font-weight:700; }
+  .scale-item:focus-within{ outline:2px solid var(--primary); outline-offset:2px; border-color:var(--accent); }
+  .error-text{ color:var(--danger); font-size:.78rem; margin-top:8px; font-weight:600; display:none; }
+  .question.invalid .error-text{ display:block; }
+  .nav-row{ display:flex; justify-content:space-between; align-items:center; padding:18px 28px 26px; gap:12px; }
+  button{
+    font-family:'Inter',sans-serif; font-weight:700; font-size:.88rem; border:none; border-radius:10px; padding:12px 22px; cursor:pointer;
+    transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease, background .2s ease;
+  }
+  button:active{ transform:translateY(1px) scale(.98); }
+  .btn-primary{ background:var(--primary); color:#fff; box-shadow:0 6px 16px -6px rgba(30,127,140,.5); }
+  .btn-primary:hover{ background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 10px 22px -8px rgba(30,127,140,.55); }
+  .btn-ghost{ background:#fff; color:var(--ink-soft); border:1.5px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--primary); color:var(--primary); transform:translateY(-2px); }
+  .btn-ghost:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn-ghost:disabled:hover{ transform:none; }
+  .btn-submit{ background:var(--success); color:#fff; box-shadow:0 6px 16px -6px rgba(47,158,110,.5); }
+  .btn-submit:hover{ background:#25845c; transform:translateY(-2px); box-shadow:0 10px 22px -8px rgba(47,158,110,.55); }
+  .result-wrap{ padding:34px 30px 34px; text-align:center; }
+  .result-icon{ width:64px; height:64px; border-radius:50%; background:var(--success-tint); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:1.8rem; }
+  .result-wrap h2{ font-size:1.4rem; color:var(--ink); }
+  .result-wrap > p.sub{ color:var(--ink-soft); max-width:520px; margin:8px auto 26px; font-size:.92rem; }
+  .result-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; text-align:left; margin-bottom:22px; }
+  .result-card{ border:1px solid var(--line); border-radius:var(--radius-sm); padding:16px 18px; background:#FBFEFD; }
+  .result-card.band-tinggi{ border-color:#F0C7C4; background:var(--danger-tint); }
+  .result-card.band-sedang{ border-color:#F0D9B5; background:var(--warn-tint); }
+  .result-card.band-rendah{ border-color:#BFE6D2; background:var(--success-tint); }
+  .result-card .tag{ font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--primary); margin-bottom:6px; display:block; }
+  .result-card .val{ font-family:'Poppins',sans-serif; font-weight:700; font-size:1.05rem; color:var(--ink); }
+  .result-card .desc{ font-size:.82rem; color:var(--ink-soft); margin-top:4px; }
+  .action-box{ text-align:left; border:1px solid var(--line); border-radius:var(--radius-sm); padding:18px 20px; margin-bottom:20px; background:#FBFEFD; }
+  .action-box h3{ font-size:1rem; color:var(--primary-dark); margin-bottom:8px; }
+  .action-box ul{ margin:8px 0 0; padding-left:18px; font-size:.86rem; color:var(--ink); }
+  .action-box li{ margin-bottom:6px; }
+  .support-banner{
+    text-align:left; font-size:.82rem; font-weight:600; padding:12px 16px; border-radius:9px; margin:0 0 20px;
+    background:var(--primary-tint); color:var(--primary-dark); border:1px solid #C7E3E0;
+  }
+  .ref-box{ text-align:left; border-top:1px dashed var(--line); margin-top:18px; padding-top:18px; font-size:.78rem; color:var(--ink-soft); }
+  .ref-box strong{ display:block; color:var(--ink); margin-bottom:6px; font-size:.82rem; }
+  .ref-box ul{ margin:0; padding-left:18px; }
+  .ref-box li{ margin-bottom:4px; }
+  .send-status{ text-align:left; font-size:.82rem; font-weight:600; padding:10px 14px; border-radius:9px; margin:0 0 20px; }
+  .send-status-ok{ background:var(--success-tint); color:#0c7a4b; border:1px solid #B7EBD3; }
+  .send-status-warn{ background:var(--warn-tint); color:#92610A; border:1px solid #F0D9B5; }
+  .footnote{ text-align:center; margin-top:20px; font-size:.78rem; color:var(--ink-soft); }
+  @media (max-width:560px){
+    .step .label{ display:none; }
+    .stepper{ padding:20px 18px 0; }
+    .progress-shell{ padding:14px 18px 0; }
+    .form-body{ padding:20px 18px 4px; }
+    .nav-row{ padding:16px 18px 22px; }
+    .scale-row{ flex-wrap:wrap; }
+    .scale-item{ min-width:56px; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="app-header">
+    <span class="eyebrow">Layanan Kesejahteraan Guru</span>
+    <h1>Skrining Awal Tingkat Stres Kerja Guru</h1>
+    <p>Kuesioner ini membantu memetakan tingkat stres kerja yang Anda rasakan, agar sekolah dapat menyiapkan bentuk dukungan yang tepat. Tidak ada jawaban benar atau salah.</p>
+  </header>
+
+  <div class="disclaimer">
+    <strong>Sebelum mengisi, mohon perhatikan hal berikut:</strong>
+    <ul>
+      <li>Instrumen ini adalah alat skrining awal untuk memetakan kecenderungan stres kerja, bukan alat diagnosis klinis gangguan kesehatan mental.</li>
+      <li>Hasil asesmen ini tidak akan digunakan sebagai dasar penilaian kinerja Anda oleh pihak sekolah.</li>
+      <li>Kerahasiaan jawaban dijaga; hasil hanya digunakan secara agregat oleh tim BK/psikolog sekolah untuk merancang program dukungan bagi guru.</li>
+      <li>Apabila Anda merasa sangat kewalahan, layanan Healing119 Kemenkes (hotline 119 ext. 8, gratis &amp; 24 jam) dapat dihubungi. Jika antrean telepon panjang, chat/panggilan suara melalui www.healing119.id biasanya lebih cepat. Anda juga bisa bicarakan dengan psikolog/konselor profesional terdekat.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="stepper" id="stepper"></div>
+    <div class="progress-shell">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-meta">
+        <span id="progressLabel">Memuat pertanyaan…</span>
+        <span id="progressPercent">0%</span>
+      </div>
+    </div>
+    <form id="asesmenForm" class="form-body" novalidate></form>
+    <div class="nav-row" id="navRow">
+      <button type="button" class="btn-ghost" id="btnPrev">← Sebelumnya</button>
+      <button type="button" class="btn-primary" id="btnNext">Selanjutnya →</button>
+      <button type="button" class="btn-submit" id="btnSubmit" style="display:none;">Lihat Hasil ✓</button>
+    </div>
+    <div class="result-wrap" id="resultWrap" style="display:none;"></div>
+  </div>
+
+  <p class="footnote">Layanan Bimbingan & Konseling — SMKN 1 Duduksampeyan.</p>
+</div>
+
+<script>
+/* =========================================================================
+   KONFIGURASI
+   - SHEET_WEB_APP_URL: isi dengan URL Web App dari Google Apps Script
+     (lihat penjelasan struktur kode) agar hasil rekap otomatis masuk
+     ke Google Spreadsheet. Kosongkan jika belum siap disambungkan.
+   ========================================================================= */
+const SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzmE2olB9gklRTH72oZRZb8RDTIFCtWpB48ILfmivJrte-0ttl7zNjACqrL4puLjnTjrQ/exec";
+
+/* Skala jawaban yang dipakai ulang di beberapa bagian */
+const SKALA_FREKUENSI = ["Tidak pernah","Jarang","Kadang-kadang","Sering","Hampir selalu"];
+const SKALA_SETUJU    = ["Sangat tidak setuju","Tidak setuju","Netral","Setuju","Sangat setuju"];
+
+/* =========================================================================
+   STRUKTUR ASESMEN
+   Bagian 2 diadaptasi dari konsep Perceived Stress Scale (Cohen, Kamarck &
+   Mermelstein, 1983) — mengukur sejauh mana situasi kerja dirasakan tidak
+   terduga, tidak terkendali, dan membebani.
+   Bagian 3 diadaptasi dari dimensi Teacher Stress Inventory (Fimian, 1984,
+   Journal of Occupational Psychology) — sumber tekanan spesifik profesi guru.
+   Bagian 4 diadaptasi dari subskala gejala stres pada DASS (Lovibond &
+   Lovibond, 1995) — manifestasi fisik dan emosional dari stres.
+   Item ditulis ulang dengan bahasa orisinal agar sesuai konteks sekolah
+   Indonesia, bukan kutipan langsung dari instrumen aslinya.
+   ========================================================================= */
+const ASSESSMENT_DATA = [
+  {
+    id: "identitas", title: "Data & Persetujuan",
+    description: "Data ini hanya digunakan untuk membantu tim BK memahami konteks.",
+    questions: [
+      { id:"nama", type:"text", label:"1. Nama", required:false },
+      { id:"unit_kerja", type:"text", label:"2. Mata Pelajaran / Unit Kerja", required:false },
+      { id:"masa_kerja", type:"select", label:"3. Lama masa kerja sebagai guru", required:false,
+        options:["Kurang dari 1 tahun","1–5 tahun","6–10 tahun","11–20 tahun","Lebih dari 20 tahun"] },
+      { id:"consent", type:"checkbox", label:"4. Persetujuan Berpartisipasi", required:true,
+        options:["Saya telah membaca informasi di atas dan memahami bahwa pengisian ini bersifat sukarela, merupakan skrining awal (bukan diagnosis klinis), tidak mempengaruhi penilaian kinerja saya, dan kerahasiaan jawaban saya dijaga."] }
+    ]
+  },
+  {
+    id: "persepsi_stres", title: "Beban & Kendali Kerja",
+    description: "Nilai seberapa sering Anda mengalaminnya dalam 1-3 bulan terakhir.",
+    questions: [
+      { id:"ps_1", type:"scale", label:"5. Tuntutan pekerjaan datang lebih cepat daripada yang bisa saya selesaikan.", required:true, options:SKALA_FREKUENSI },
+      { id:"ps_2", type:"scale", label:"6. Hal-hal di luar kendali saya (kebijakan mendadak, jadwal berubah, dsb.) membuat pekerjaan terasa lebih berat.", required:true, options:SKALA_FREKUENSI },
+      { id:"ps_3", type:"scale", label:"7. Saya merasa gugup atau tegang karena banyaknya tanggung jawab yang harus dijalankan sekaligus.", required:true, options:SKALA_FREKUENSI },
+      { id:"ps_4", type:"scale", label:"8. Saya kesulitan menenangkan diri setelah menghadapi situasi yang menekan di sekolah.", required:true, options:SKALA_FREKUENSI },
+      { id:"ps_5", type:"scale", label:"9. Saya merasa yakin mampu mengatasi sebagian besar persoalan pekerjaan yang muncul.", required:true, options:SKALA_FREKUENSI, reverse:true },
+      { id:"ps_6", type:"scale", label:"10. Saya merasa memiliki kendali atas cara saya mengatur waktu dan prioritas kerja.", required:true, options:SKALA_FREKUENSI, reverse:true },
+      { id:"ps_7", type:"scale", label:"11. Saya merasa lelah secara mental bahkan sebelum hari kerja benar-benar selesai.", required:true, options:SKALA_FREKUENSI },
+      { id:"ps_8", type:"scale", label:"12. Pekerjaan saya menumpuk hingga sulit diselesaikan tepat waktu.", required:true, options:SKALA_FREKUENSI }
+    ]
+  },
+  {
+    id: "stresor_profesi", title: "Sumber Tekanan Profesi Guru",
+    description: "Nilai seberapa setuju Anda dengan pernyataan berikut, berdasarkan pengalaman mengajar Anda belakangan ini.",
+    questions: [
+      { id:"sp_1", type:"scale", label:"13. Beban administratif (laporan, dokumen, penilaian) menyita banyak waktu yang seharusnya untuk persiapan mengajar.", required:true, options:SKALA_SETUJU },
+      { id:"sp_2", type:"scale", label:"14. Jumlah siswa dalam satu kelas membuat saya kesulitan memberi perhatian yang memadai kepada setiap siswa.", required:true, options:SKALA_SETUJU },
+      { id:"sp_3", type:"scale", label:"15. Mengelola perilaku siswa yang sulit diatur adalah salah satu sumber tekanan terbesar bagi saya.", required:true, options:SKALA_SETUJU },
+      { id:"sp_4", type:"scale", label:"16. Komunikasi dengan orang tua/wali siswa terkadang menjadi sumber ketegangan tersendiri.", required:true, options:SKALA_SETUJU },
+      { id:"sp_5", type:"scale", label:"17. Saya merasa mendapat dukungan yang memadai dari kepala sekolah dan rekan sejawat.", required:true, options:SKALA_SETUJU, reverse:true },
+      { id:"sp_6", type:"scale", label:"18. Saya kesulitan menyeimbangkan waktu antara pekerjaan dan kehidupan pribadi/keluarga.", required:true, options:SKALA_SETUJU },
+      { id:"sp_7", type:"scale", label:"19. Saya khawatir cara kerja saya akan dinilai secara tidak adil oleh atasan.", required:true, options:SKALA_SETUJU },
+      { id:"sp_8", type:"scale", label:"20. Saya merasa memiliki cukup waktu istirahat di sela-sela jam mengajar.", required:true, options:SKALA_SETUJU, reverse:true }
+    ]
+  },
+  {
+    id: "manifestasi", title: "Manifestasi Fisik & Emosional",
+    description: "Nilai seberapa sering Anda mengalaminnya dalam 1-3 bulan terakhir.",
+    questions: [
+      { id:"mf_1", type:"scale", label:"21. Saya mengalami kesulitan tidur (sulit memulai tidur atau sering terbangun) karena memikirkan pekerjaan.", required:true, options:SKALA_FREKUENSI },
+      { id:"mf_2", type:"scale", label:"22. Saya merasa mudah tersinggung atau marah terhadap hal-hal kecil di tempat kerja.", required:true, options:SKALA_FREKUENSI },
+      { id:"mf_3", type:"scale", label:"23. Saya mengalami sakit kepala, nyeri leher/punggung, atau ketegangan otot yang saya kaitkan dengan pekerjaan.", required:true, options:SKALA_FREKUENSI },
+      { id:"mf_4", type:"scale", label:"24. Saya merasa sulit berkonsentrasi saat mengajar atau menyiapkan materi.", required:true, options:SKALA_FREKUENSI },
+      { id:"mf_5", type:"scale", label:"25. Nafsu makan saya berubah cukup signifikan (meningkat atau menurun) akibat tekanan pekerjaan.", required:true, options:SKALA_FREKUENSI },
+      { id:"mf_6", type:"scale", label:"26. Saya merasa lelah secara fisik meskipun sudah cukup beristirahat.", required:true, options:SKALA_FREKUENSI }
+    ]
+  },
+  {
+    id: "refleksi", title: "Refleksi & Kebutuhan Dukungan",
+    description: "Bagian terakhir ini bersifat opsional, namun sangat membantu sekolah merancang bentuk dukungan yang relevan.",
+    questions: [
+      { id:"kesulitan", type:"textarea", label:"27. Jika ada, ceritakan secara singkat tantangan spesifik yang paling Anda rasakan belakangan ini.", required:false },
+      { id:"dukungan", type:"checkbox", label:"28. Bentuk dukungan seperti apa yang paling Anda butuhkan saat ini?", required:true,
+        options:["Pelatihan manajemen waktu & beban kerja","Konseling psikologi individual","Pengurangan/penyederhanaan beban administratif","Kelompok dukungan sesama rekan guru (peer support)","Pelatihan manajemen kelas","Waktu istirahat/jeda tambahan di sela mengajar","Saat ini saya belum membutuhkan dukungan tambahan"] }
+    ]
+  }
+];
+
+const state = { currentSection: 0, answers: {} };
+
+const formEl = document.getElementById('asesmenForm');
+const stepperEl = document.getElementById('stepper');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+const progressPercent = document.getElementById('progressPercent');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnSubmit = document.getElementById('btnSubmit');
+const navRow = document.getElementById('navRow');
+const resultWrap = document.getElementById('resultWrap');
+
+const totalQuestions = ASSESSMENT_DATA.reduce((sum, s) => sum + s.questions.length, 0);
+const totalRequiredQuestions = ASSESSMENT_DATA.reduce((sum, s) => sum + s.questions.filter(q => q.required).length, 0);
+
+function buildStepper(){
+  stepperEl.innerHTML = ASSESSMENT_DATA.map((section, i) => `
+    <div class="step" data-index="${i}">
+      <button type="button" class="dot" data-index="${i}" aria-label="Bagian ${i + 1}: ${section.title}">${i + 1}</button>
+      <div class="label">${section.title}</div>
+    </div>
+  `).join('');
+  stepperEl.querySelectorAll('.dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const idx = Number(dot.dataset.index);
+      // Hanya izinkan kembali ke bagian yang sudah dilewati/sedang aktif,
+      // agar bagian berikutnya tetap melalui validasi lewat tombol "Selanjutnya".
+      if (idx <= state.currentSection){
+        state.currentSection = idx;
+        renderSection();
+      }
+    });
+  });
+}
+
+function updateStepper(){
+  document.querySelectorAll('.step').forEach((el) => {
+    const i = Number(el.dataset.index);
+    el.classList.toggle('active', i === state.currentSection);
+    el.classList.toggle('done', i < state.currentSection);
+    el.querySelector('.dot').textContent = i < state.currentSection ? '✓' : (i + 1);
+  });
+}
+
+function questionsBeforeSection(index){
+  return ASSESSMENT_DATA.slice(0, index).reduce((sum, s) => sum + s.questions.length, 0);
+}
+
+function updateProgress(){
+  const isAnswered = (v) => Array.isArray(v) ? v.length > 0 : (v !== undefined && v !== null && v !== '');
+  const answeredRequired = ASSESSMENT_DATA
+    .flatMap(s => s.questions)
+    .filter(q => q.required && isAnswered(state.answers[q.id]))
+    .length;
+  const pct = Math.round((answeredRequired / totalRequiredQuestions) * 100);
+  progressFill.style.width = pct + '%';
+  progressPercent.textContent = pct + '%';
+  const doneBefore = questionsBeforeSection(state.currentSection);
+  const sectionLen = ASSESSMENT_DATA[state.currentSection].questions.length;
+  progressLabel.textContent = `Bagian ${state.currentSection + 1} dari ${ASSESSMENT_DATA.length} • Pertanyaan ${doneBefore + 1}–${doneBefore + sectionLen} dari ${totalQuestions}`;
+}
+
+function renderQuestion(q){
+  const wrap = document.createElement('div');
+  wrap.className = 'question';
+  wrap.dataset.qid = q.id;
+
+  const label = document.createElement('label');
+  label.className = 'qlabel';
+  label.innerHTML = q.label + (q.required ? '<span class="required-mark">*</span>' : '');
+  wrap.appendChild(label);
+
+  const saved = state.answers[q.id];
+
+  if (q.type === 'text'){
+    const input = document.createElement('input');
+    input.type = 'text'; input.name = q.id;
+    input.value = saved || '';
+    input.addEventListener('input', () => { state.answers[q.id] = input.value; clearInvalid(wrap); updateProgress(); });
+    wrap.appendChild(input);
+  }
+
+  if (q.type === 'textarea'){
+    const ta = document.createElement('textarea');
+    ta.name = q.id;
+    ta.value = saved || '';
+    ta.addEventListener('input', () => { state.answers[q.id] = ta.value; clearInvalid(wrap); updateProgress(); });
+    wrap.appendChild(ta);
+  }
+
+  if (q.type === 'select'){
+    const sel = document.createElement('select');
+    sel.name = q.id;
+    sel.innerHTML = '<option value="">— Pilih salah satu —</option>' +
+      q.options.map(o => `<option value="${o}" ${saved === o ? 'selected' : ''}>${o}</option>`).join('');
+    sel.addEventListener('change', () => { state.answers[q.id] = sel.value; clearInvalid(wrap); updateProgress(); });
+    wrap.appendChild(sel);
+  }
+
+  if (q.type === 'radio' || q.type === 'checkbox'){
+    const grid = document.createElement('div');
+    grid.className = 'options-grid';
+    q.options.forEach((opt) => {
+      const item = document.createElement('label');
+      item.className = 'option-item';
+      const inputType = q.type === 'radio' ? 'radio' : 'checkbox';
+      const isChecked = q.type === 'radio' ? saved === opt : Array.isArray(saved) && saved.includes(opt);
+      item.classList.toggle('checked', isChecked);
+      const shapeClass = q.type === 'radio' ? 'radio-shape' : 'checkbox-shape';
+      item.innerHTML = `<input type="${inputType}" name="${q.id}" value="${opt}" ${isChecked ? 'checked' : ''}><span class="indicator ${shapeClass}"></span><span>${opt}</span>`;
+      const input = item.querySelector('input');
+      input.addEventListener('change', () => {
+        if (q.type === 'radio'){
+          state.answers[q.id] = opt;
+          grid.querySelectorAll('.option-item').forEach(el => el.classList.remove('checked'));
+          item.classList.add('checked');
+        } else {
+          const arr = Array.isArray(state.answers[q.id]) ? state.answers[q.id].slice() : [];
+          if (input.checked){ arr.push(opt); item.classList.add('checked'); }
+          else { const i = arr.indexOf(opt); if (i > -1) arr.splice(i,1); item.classList.remove('checked'); }
+          state.answers[q.id] = arr;
+        }
+        clearInvalid(wrap); updateProgress();
+      });
+      grid.appendChild(item);
+    });
+    wrap.appendChild(grid);
+  }
+
+  if (q.type === 'scale'){
+    const row = document.createElement('div');
+    row.className = 'scale-row';
+    row.setAttribute('role', 'radiogroup');
+    q.options.forEach((opt, idx) => {
+      const value = idx + 1;
+      const item = document.createElement('label');
+      item.className = 'scale-item';
+      const isChecked = saved === value;
+      item.classList.toggle('checked', isChecked);
+      item.innerHTML = `<input type="radio" name="${q.id}" value="${value}" ${isChecked ? 'checked' : ''}><span class="scale-num">${value}</span><span class="scale-label">${opt}</span>`;
+      const input = item.querySelector('input');
+      input.addEventListener('change', () => {
+        state.answers[q.id] = value;
+        row.querySelectorAll('.scale-item').forEach(el => el.classList.remove('checked'));
+        item.classList.add('checked');
+        clearInvalid(wrap); updateProgress();
+      });
+      row.appendChild(item);
+    });
+    wrap.appendChild(row);
+  }
+
+  const err = document.createElement('div');
+  err.className = 'error-text';
+  err.setAttribute('aria-live', 'polite');
+  err.textContent = 'Pertanyaan ini wajib diisi sebelum melanjutkan.';
+  wrap.appendChild(err);
+
+  return wrap;
+}
+
+function clearInvalid(wrap){ wrap.classList.remove('invalid'); }
+
+function renderSection(){
+  const section = ASSESSMENT_DATA[state.currentSection];
+  formEl.innerHTML = '';
+  formEl.classList.remove('fade-in');
+  void formEl.offsetWidth;
+  formEl.classList.add('fade-in');
+
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  head.innerHTML = `<h2>Bagian ${state.currentSection + 1}: ${section.title}</h2><p>${section.description}</p>`;
+  formEl.appendChild(head);
+
+  section.questions.forEach(q => formEl.appendChild(renderQuestion(q)));
+
+  updateStepper();
+  updateProgress();
+
+  btnPrev.disabled = state.currentSection === 0;
+  const isLast = state.currentSection === ASSESSMENT_DATA.length - 1;
+  btnNext.style.display = isLast ? 'none' : 'inline-block';
+  btnSubmit.style.display = isLast ? 'inline-block' : 'none';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateSection(){
+  const section = ASSESSMENT_DATA[state.currentSection];
+  let valid = true;
+  let firstInvalidEl = null;
+
+  section.questions.forEach(q => {
+    if (!q.required) return;
+    const v = state.answers[q.id];
+    const isEmpty = Array.isArray(v) ? v.length === 0 : (v === undefined || v === null || String(v).trim() === '');
+    const qEl = formEl.querySelector(`.question[data-qid="${q.id}"]`);
+    if (isEmpty){
+      valid = false;
+      qEl.classList.add('invalid');
+      if (!firstInvalidEl) firstInvalidEl = qEl;
+    } else {
+      qEl.classList.remove('invalid');
+    }
+  });
+
+  if (firstInvalidEl){
+    firstInvalidEl.scrollIntoView({ behavior:'smooth', block:'center' });
+    const focusTarget = firstInvalidEl.querySelector('input, textarea, select, button');
+    if (focusTarget) focusTarget.focus({ preventScroll: true });
+  }
+  return valid;
+}
+
+btnNext.addEventListener('click', () => {
+  if (!validateSection()) return;
+  state.currentSection = Math.min(state.currentSection + 1, ASSESSMENT_DATA.length - 1);
+  renderSection();
+});
+
+btnPrev.addEventListener('click', () => {
+  state.currentSection = Math.max(state.currentSection - 1, 0);
+  renderSection();
+});
+
+btnSubmit.addEventListener('click', async () => {
+  if (!validateSection()) return;
+  const jsonData = JSON.stringify(state.answers, null, 2);
+  console.log('Data asesmen tersimpan (simulasi):', jsonData);
+
+  const analysis = analyzeResults();
+  const recapPayload = buildRecapPayload(analysis);
+
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = 'Mengirim…';
+  const sendStatus = await sendToGoogleSheet(recapPayload);
+  btnSubmit.disabled = false;
+  btnSubmit.textContent = 'Lihat Hasil ✓';
+
+  showResult(sendStatus, analysis);
+});
+
+/* =========================================================================
+   MESIN PENILAIAN (SCORING ENGINE)
+   Setiap subskala memakai skala 1–5 per item. Item yang ditandai
+   `reverse:true` (pernyataan positif, misal "saya merasa memiliki kendali")
+   dibalik skornya (6 - nilai) agar arah skornya konsisten: makin tinggi
+   angka = makin tinggi indikasi stres.
+   Kategorisasi (Rendah/Sedang/Tinggi) bersifat INDIKATIF untuk kebutuhan
+   skrining & tindak lanjut awal, bukan ambang klinis yang baku.
+   ========================================================================= */
+const SUBSCALES = {
+  persepsi_stres:   ["ps_1","ps_2","ps_3","ps_4","ps_5","ps_6","ps_7","ps_8"],
+  stresor_profesi:  ["sp_1","sp_2","sp_3","sp_4","sp_5","sp_6","sp_7","sp_8"],
+  manifestasi:      ["mf_1","mf_2","mf_3","mf_4","mf_5","mf_6"]
+};
+
+function findQuestionById(id){
+  for (const section of ASSESSMENT_DATA){
+    const q = section.questions.find(q => q.id === id);
+    if (q) return q;
+  }
+  return null;
+}
+
+function subscaleAverage(ids){
+  const a = state.answers;
+  const vals = ids.map(id => {
+    const raw = Number(a[id]);
+    if (!raw) return null;
+    const q = findQuestionById(id);
+    return q && q.reverse ? (6 - raw) : raw;
+  }).filter(v => v !== null);
+  return vals.length ? vals.reduce((s,v) => s+v, 0) / vals.length : 0;
+}
+
+function bandOf(score){
+  // skala rata-rata 1–5
+  if (score >= 3.67) return "Tinggi";
+  if (score >= 2.34) return "Sedang";
+  return "Rendah";
+}
+
+function analyzeResults(){
+  const skorPersepsi  = subscaleAverage(SUBSCALES.persepsi_stres);
+  const skorStresor   = subscaleAverage(SUBSCALES.stresor_profesi);
+  const skorManifestasi = subscaleAverage(SUBSCALES.manifestasi);
+  const skorGabungan = (skorPersepsi + skorStresor + skorManifestasi) / 3;
+
+  return {
+    skorPersepsi, skorStresor, skorManifestasi, skorGabungan,
+    bandPersepsi: bandOf(skorPersepsi),
+    bandStresor: bandOf(skorStresor),
+    bandManifestasi: bandOf(skorManifestasi),
+    bandGabungan: bandOf(skorGabungan)
+  };
+}
+
+function buildRecapPayload(analysis){
+  const a = state.answers;
+  return {
+    nama: a.nama || 'Anonim',
+    unit_kerja: a.unit_kerja || '',
+    masa_kerja: a.masa_kerja || '',
+    skor_persepsi_stres: Number(analysis.skorPersepsi.toFixed(2)),
+    skor_stresor_profesi: Number(analysis.skorStresor.toFixed(2)),
+    skor_manifestasi: Number(analysis.skorManifestasi.toFixed(2)),
+    skor_gabungan: Number(analysis.skorGabungan.toFixed(2)),
+    kategori_keseluruhan: analysis.bandGabungan,
+    kesulitan_dirasakan: a.kesulitan || '',
+    dukungan_dibutuhkan: Array.isArray(a.dukungan) ? a.dukungan.join(', ') : '',
+    waktu_pengisian: new Date().toISOString()
+  };
+}
+
+async function sendToGoogleSheet(data){
+  if (!SHEET_WEB_APP_URL){
+    return { sent:false, reason:'not_configured' };
+  }
+  try{
+    await fetch(SHEET_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data)
+    });
+    return { sent:true };
+  }catch(err){
+    console.error('Gagal mengirim ke Google Sheets:', err);
+    return { sent:false, reason:'network_error' };
+  }
+}
+
+/* =========================================================================
+   INTERPRETASI & REKOMENDASI
+   ========================================================================= */
+const REKOMENDASI = {
+  Rendah: {
+    ringkasan: "Tingkat stres kerja yang teridentifikasi saat ini berada pada kategori rendah. Ini menunjukkan Anda cukup mampu mengelola tuntutan pekerjaan dengan strategi yang sehat.",
+    saran: [
+      "Pertahankan rutinitas self-care dan waktu istirahat yang sudah Anda jalani.",
+      "Jadilah pendengar yang baik bagi rekan sejawat yang mungkin sedang membutuhkan dukungan.",
+      "Sesekali lakukan refleksi singkat di akhir pekan untuk mengenali perubahan kondisi diri sejak dini."
+    ]
+  },
+  Sedang: {
+    ringkasan: "Tingkat stres kerja Anda berada pada kategori sedang — kondisi yang cukup umum dialami dalam profesi mengajar, terutama pada periode-periode sibuk.",
+    saran: [
+      "Coba teknik relaksasi napas sederhana (misalnya tarik napas 4 detik, tahan 7 detik, embuskan 8 detik) saat merasa tegang.",
+      "Gunakan teknik time-blocking untuk memisahkan waktu mengajar, menilai, dan istirahat secara lebih jelas.",
+      "Luangkan waktu berbincang santai dengan sesama guru — dukungan sosial rekan sejawat terbukti membantu meredakan tekanan kerja.",
+      "Jika beban administratif terasa berat, diskusikan prioritas tugas dengan atasan atau koordinator bidang."
+    ]
+  },
+  Tinggi: {
+    ringkasan: "Tingkat stres kerja Anda berada pada kategori tinggi. Ini bukan tanda kelemahan pribadi — berbagai faktor struktural dalam dunia pendidikan turut berkontribusi terhadap kondisi ini.",
+    saran: [
+      "Sangat dianjurkan untuk berbicara dengan konselor sekolah atau psikolog profesional dalam waktu dekat.",
+      "Pertimbangkan untuk memeriksakan diri jika gejala fisik (sulit tidur, sakit kepala, kelelahan terus-menerus) sudah cukup mengganggu keseharian.",
+      "Bicarakan beban kerja Anda dengan atasan — menyampaikan kebutuhan bukanlah tanda kegagalan, melainkan langkah profesional yang sehat.",
+      "Anda dapat menghubungi layanan Healing119 Kemenkes melalui hotline 119 ext. 8 (gratis, 24 jam) bila membutuhkan seseorang untuk diajak bicara segera."
+    ]
+  }
+};
+
+function levelTagClass(band){
+  if (band === "Tinggi") return "band-tinggi";
+  if (band === "Sedang") return "band-sedang";
+  return "band-rendah";
+}
+
+function showResult(sendStatus, analysis){
+  navRow.style.display = 'none';
+  formEl.style.display = 'none';
+  document.getElementById('stepper').style.display = 'none';
+  document.querySelector('.progress-shell').style.display = 'none';
+
+  const { skorPersepsi, skorStresor, skorManifestasi, bandPersepsi, bandStresor, bandManifestasi, bandGabungan } = analysis;
+  const rekom = REKOMENDASI[bandGabungan];
+
+  let statusBanner = '';
+  if (sendStatus && sendStatus.sent){
+    statusBanner = `<div class="send-status send-status-ok">✅ Hasil berhasil terkirim ke rekap tim BK/Kesejahteraan Guru.</div>`;
+  } else if (sendStatus && sendStatus.reason === 'not_configured'){
+    statusBanner = `<div class="send-status send-status-warn">ℹ️ Pengiriman otomatis ke spreadsheet belum diaktifkan untuk form ini. Hasil tetap tersimpan pada layar ini.</div>`;
+  } else if (sendStatus && sendStatus.reason === 'network_error'){
+    statusBanner = `<div class="send-status send-status-warn">⚠️ Hasil belum berhasil terkirim ke rekap (koneksi bermasalah). Silakan tunjukkan atau tangkap layar hasil ini sebagai cadangan.</div>`;
+  }
+
+  resultWrap.style.display = 'block';
+  resultWrap.classList.add('fade-in');
+  resultWrap.innerHTML = `
+    <div class="result-icon">🌿</div>
+    <h2>Terima kasih, ${escapeHtml(state.answers.nama || 'Bapak/Ibu Guru')}.</h2>
+    <p class="sub">Berikut ringkasan hasil skrining Anda. Hasil ini bersifat rahasia, tidak mempengaruhi penilaian kinerja, dan ditujukan sebagai bahan refleksi bersama tim BK/psikolog sekolah.</p>
+    ${statusBanner}
+
+    <div class="result-grid">
+      <div class="result-card ${levelTagClass(bandPersepsi)}">
+        <span class="tag">Beban & Kendali Kerja</span>
+        <div class="val">${bandPersepsi} <span style="font-weight:500;font-size:.8rem;color:var(--ink-soft);">(${skorPersepsi.toFixed(2)}/5)</span></div>
+        <div class="desc">Mengukur sejauh mana pekerjaan terasa tidak terduga, menumpuk, atau di luar kendali.</div>
+      </div>
+      <div class="result-card ${levelTagClass(bandStresor)}">
+        <span class="tag">Sumber Tekanan Profesi</span>
+        <div class="val">${bandStresor} <span style="font-weight:500;font-size:.8rem;color:var(--ink-soft);">(${skorStresor.toFixed(2)}/5)</span></div>
+        <div class="desc">Mengukur tekanan dari beban administratif, kelas, siswa, orang tua, dan dukungan kerja.</div>
+      </div>
+      <div class="result-card ${levelTagClass(bandManifestasi)}">
+        <span class="tag">Gejala Fisik & Emosional</span>
+        <div class="val">${bandManifestasi} <span style="font-weight:500;font-size:.8rem;color:var(--ink-soft);">(${skorManifestasi.toFixed(2)}/5)</span></div>
+        <div class="desc">Mengukur gejala seperti gangguan tidur, mudah marah, kelelahan, dan ketegangan fisik.</div>
+      </div>
+    </div>
+
+    <div class="action-box">
+      <h3>Kategori Keseluruhan: ${bandGabungan}</h3>
+      <p style="font-size:.88rem;color:var(--ink);margin:0 0 8px;">${rekom.ringkasan}</p>
+      <ul>${rekom.saran.map(s => `<li>${s}</li>`).join('')}</ul>
+    </div>
+
+    <div class="support-banner">
+      💬 Kapan pun Anda merasa sangat kewalahan, layanan <strong>Healing119 Kemenkes</strong> (119 ext. 8, gratis &amp; 24 jam, atau chat lebih cepat via www.healing119.id) atau psikolog/konselor profesional terdekat dapat dihubungi — tidak perlu menunggu sampai kondisi memburuk.
+    </div>
+
+    ${buildReflectionCard()}
+
+    <div class="ref-box">
+      <strong>📚 Landasan konsep skrining ini</strong>
+      <ul>
+        <li>Bagian "Beban & Kendali Kerja" diadaptasi dari konsep Perceived Stress Scale (Cohen, Kamarck &amp; Mermelstein, 1983), yang mengukur persepsi terhadap situasi yang tidak terduga, tidak terkendali, dan membebani.</li>
+        <li>Bagian "Sumber Tekanan Profesi" diadaptasi dari dimensi Teacher Stress Inventory (Fimian, 1984, Journal of Occupational Psychology), yang memetakan sumber tekanan spesifik dalam pekerjaan mengajar.</li>
+        <li>Bagian "Gejala Fisik & Emosional" diadaptasi dari prinsip pengukuran gejala stres pada DASS (Lovibond &amp; Lovibond, 1995).</li>
+        <li>Kategorisasi Rendah/Sedang/Tinggi bersifat indikatif untuk kebutuhan skrining awal dan tindak lanjut program kesejahteraan guru, bukan ambang diagnosis klinis baku.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center;">
+      <button type="button" class="btn-ghost" id="btnRestart">↺ Isi Ulang dari Awal</button>
+    </div>
+  `;
+
+  const restartBtn = resultWrap.querySelector('#btnRestart');
+  if (restartBtn) restartBtn.addEventListener('click', restartForm);
+}
+
+function restartForm(){
+  state.currentSection = 0;
+  state.answers = {};
+  resultWrap.style.display = 'none';
+  resultWrap.innerHTML = '';
+  formEl.style.display = '';
+  document.getElementById('stepper').style.display = '';
+  document.querySelector('.progress-shell').style.display = '';
+  navRow.style.display = '';
+  renderSection();
+}
+
+function buildReflectionCard(){
+  const a = state.answers;
+  const kesulitan = (a.kesulitan || '').trim();
+  const dukungan = Array.isArray(a.dukungan) ? a.dukungan : [];
+
+  if (!kesulitan && dukungan.length === 0) return '';
+
+  const kesulitanHtml = kesulitan
+    ? `<p style="margin:0 0 12px; font-size:.88rem; color:var(--ink);">"${escapeHtml(kesulitan)}"</p>`
+    : `<p style="margin:0 0 12px; font-size:.85rem; color:var(--ink-soft); font-style:italic;">Tidak ada catatan tantangan khusus yang dituliskan.</p>`;
+
+  const dukunganHtml = dukungan.length
+    ? `<div style="display:flex; flex-wrap:wrap; gap:6px;">${dukungan.map(b => `<span style="background:var(--primary-tint); color:var(--primary-dark); font-size:.78rem; font-weight:600; padding:4px 10px; border-radius:999px;">${escapeHtml(b)}</span>`).join('')}</div>`
+    : '';
+
+  return `
+    <div class="result-card" style="text-align:left; margin-bottom:22px;">
+      <span class="tag">📝 Catatan dari Anda</span>
+      ${kesulitanHtml}
+      ${dukunganHtml}
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+buildStepper();
+renderSection();
+</script>
+
+</body>
+</html>
